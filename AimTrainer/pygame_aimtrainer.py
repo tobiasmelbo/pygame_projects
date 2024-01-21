@@ -1,3 +1,9 @@
+"""
+Desktop version of the aim trainer. Some enhanced features.
+
+~MELBO
+"""
+
 import pygame
 import pygame.gfxdraw
 import random
@@ -8,55 +14,7 @@ pygame.init()
 pygame.font.init()
 pygame.mixer.init()
 
-# Classes
-class Initializer:
-    def __init__(self):
-        self.initialized = False
-    
-    def get_gametype(self):
-        # Initializer loop
-        while not self.initialized:
-            # Gets mouse position
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            
-            # Fills screen
-            screen.fill(bg_color)
-
-            # Title text
-            title_text = title_font.render("Aim Trainer", True, text_color)
-            title_text_rect = title_text.get_rect(center = (screen.get_width()/2, screen.get_height()/4))
-            screen.blit(title_text, title_text_rect)
-
-            # Left initializer text
-            start_text_left = font.render("Click this side for one bubble", True, text_color)
-            start_text_left_rect = start_text_left.get_rect(center = (screen.get_width()/4, screen.get_height()/2))
-            screen.blit(start_text_left, start_text_left_rect)
-
-            # Right initializer text
-            start_text_right = font.render("Click this side for five bubbles", True, text_color)
-            start_text_right_rect = start_text_right.get_rect(center = (screen.get_width()*(3/4), screen.get_height()/2))
-            screen.blit(start_text_right, start_text_right_rect)
-
-            # Manually underlines left and right text depending on mouse position
-            if mouse_x <= screen.get_width()/2:
-                pygame.draw.line(screen, text_color, (start_text_left_rect.left, start_text_left_rect.top + start_text_left_rect.height), (start_text_left_rect.left + start_text_left_rect.width, start_text_left_rect.top + start_text_left_rect.height))
-            elif mouse_x > screen.get_width()/2:
-                pygame.draw.line(screen, text_color, (start_text_right_rect.left, start_text_right_rect.top + start_text_right_rect.height), (start_text_right_rect.left + start_text_right_rect.width, start_text_right_rect.top + start_text_right_rect.height))
-
-            pygame.display.flip()
-
-            # Event handling
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if mouse_x <= screen.get_width()/2:
-                        # Clicking left on startup gives waves with 1 circle
-                        return Game(1)
-                    elif mouse_x > screen.get_width()/2:
-                        # Clicking right on startup gives waves with 5 circles
-                        return Game(5)
-
+# Classes and functions
 class Game:
     def __init__(self, circle_count: int):
         self.round_time = 20
@@ -98,18 +56,6 @@ class Game:
             wavetime = time.time() - self.wave.start_time
             self.wavetimes.append(wavetime)
             self.wave.__init__(self.circle_count)
-        
-        # Reinitializes game if time is up
-        if (time.time() - self.start_time) > self.round_time:
-            end_game_string = f"Circles: {self.hit_counter}"
-            end_game_text = font.render(end_game_string, True, text_color)
-            end_game_rect = end_game_text.get_rect(center=(screen.get_width()/2, screen.get_height()/2))
-            pygame.draw.rect(screen, bg_color, end_game_rect)
-            screen.blit(end_game_text, (end_game_rect))
-            pygame.display.update(end_game_rect)
-            time.sleep(2)
-            pygame.event.clear()
-            self.__init__(Initializer().get_gametype().circle_count)
 
 class Wave:
     def __init__(self, circle_count):
@@ -141,45 +87,104 @@ pygame.display.set_caption("Aim Trainer")
 screen = pygame.display.set_mode((1000,500), pygame.RESIZABLE)
 clock = pygame.time.Clock()
 base_font_name = "Arial"
-title_font = pygame.font.Font("Fredoka/Static/Fredoka-Bold.ttf", size=round(screen.get_height()/10))
-font = pygame.font.Font("Fredoka/Static/Fredoka-Bold.ttf", size=round(screen.get_height()/20))
+title_font = pygame.font.Font("Fredoka-Bold.ttf", size=round(screen.get_height()/10))
+font = pygame.font.Font("Fredoka-Bold.ttf", size=round(screen.get_height()/20))
 shot_sound = pygame.mixer.Sound("shot.wav")
 bg_color = pygame.Color(170, 238, 187)
 text_color = pygame.Color(85, 130, 139)
 text_color_lighter = pygame.Color(159, 200, 208)
 pygame.mouse.set_cursor(pygame.cursors.broken_x)
 
-game = Initializer().get_gametype()
-
 # Main game loop
 running = True
+initialized = False
 while running:
-    # Event checking
-    for event in pygame.event.get():
-        # Exits the loop when window is closed
-        if event.type == pygame.QUIT:
-            running = False
+    # Initializing
+    if not initialized:
+        # Gets mouse position
+        mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        # Shoots
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            game.shoot()
+        # Fills screen
+        screen.fill(bg_color)
 
-        # Reset button
-        if pygame.key.get_pressed()[pygame.K_r]:
-            game.__init__(Initializer().get_gametype().circle_count)
+        # Title text
+        title_text = title_font.render("Aim Trainer", True, text_color)
+        title_text_rect = title_text.get_rect(center = (screen.get_width()/2, screen.get_height()/4))
+        screen.blit(title_text, title_text_rect)
+
+        # Left initializer text
+        start_text_left = font.render("Click this side for one bubble", True, text_color)
+        start_text_left_rect = start_text_left.get_rect(center = (screen.get_width()/4, screen.get_height()/2))
+        screen.blit(start_text_left, start_text_left_rect)
+
+        # Right initializer text
+        start_text_right = font.render("Click this side for five bubbles", True, text_color)
+        start_text_right_rect = start_text_right.get_rect(center = (screen.get_width()*(3/4), screen.get_height()/2))
+        screen.blit(start_text_right, start_text_right_rect)
+
+        # Manually underlines left and right text depending on mouse position
+        if mouse_x <= screen.get_width()/2:
+            pygame.draw.line(screen, text_color, (start_text_left_rect.left, start_text_left_rect.top + start_text_left_rect.height), (start_text_left_rect.left + start_text_left_rect.width, start_text_left_rect.top + start_text_left_rect.height))
+        elif mouse_x > screen.get_width()/2:
+            pygame.draw.line(screen, text_color, (start_text_right_rect.left, start_text_right_rect.top + start_text_right_rect.height), (start_text_right_rect.left + start_text_right_rect.width, start_text_right_rect.top + start_text_right_rect.height))
+
+        # Event handling
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if mouse_x <= screen.get_width()/2:
+                    # Clicking left on startup gives waves with 1 circle
+                    game = Game(1)
+                    initialized = True
+                elif mouse_x > screen.get_width()/2:
+                    # Clicking right on startup gives waves with 5 circles
+                    game = Game(5)
+                    initialized = True
+        pygame.display.flip()
+        clock.tick(60)
     
-    # Fills screen with background color
-    screen.fill(bg_color)
+    # Main game loop
+    if running and initialized:
+        # Event checking
+        for event in pygame.event.get():
+            # Exits the loop when window is closed
+            if event.type == pygame.QUIT:
+                running = False
 
-    # Updates the game
-    game.draw()
-    game.update()
+            # Shoots
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                game.shoot()
 
-    # Renders whole screen
-    pygame.display.flip()
+            # Reset button
+            if pygame.key.get_pressed()[pygame.K_r]:
+                initialized = False
+                break
+        
+        # Fills screen with background color
+        screen.fill(bg_color)
 
-    # Lock fps
-    clock.tick(60)
+        # Updates the game
+        game.draw()
+        game.update()
+
+        # Reinitializes game if time is up
+        if (time.time() - game.start_time) > game.round_time:
+            end_game_string = f"Circles: {game.hit_counter}"
+            end_game_text = font.render(end_game_string, True, text_color)
+            end_game_rect = end_game_text.get_rect(center=(screen.get_width()/2, screen.get_height()/2))
+            pygame.draw.rect(screen, bg_color, end_game_rect)
+            screen.blit(end_game_text, (end_game_rect))
+            pygame.display.update(end_game_rect) 
+            time.sleep(1)
+            pygame.event.clear()
+            initialized = False
+
+        # Renders whole screen
+        pygame.display.flip()
+
+        # Lock fps
+        clock.tick(60)
 
 # Quits game
 pygame.quit()
