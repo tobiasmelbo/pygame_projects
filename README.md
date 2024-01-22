@@ -4,7 +4,7 @@ This is where I store my pygame demos and projects. Pygame might not be the most
 
 # 🚀 Projects
 
-- 🫧 *Aim Trainer* is a simple aim trainer where you click on bubbles. I made this to test the mouse functionality in pygame.
+- 🫧 *Aim Trainer* is a simple aim trainer where you click on bubbles. I made this to test the mouse functionality in pygame. You can find a playable demo [here](https://tobiasmelbo.itch.io/pygame-aim-trainer).
 
 # 🛠️ Tools
 I use [pygame](https://github.com/pygame/pygame) for building the games and [pygbag](https://github.com/pygame-web/pygbag) to make the games playable in a browser.
