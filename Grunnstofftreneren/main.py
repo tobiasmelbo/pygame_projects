@@ -1,3 +1,7 @@
+"""
+For PYGBAG. For running normally within pygame, find "grunnstofftreneren.py".
+"""
+
 import asyncio, pygame, random, time, pymunk
 from elements import elements_NO, elements_NO_simplified
 
